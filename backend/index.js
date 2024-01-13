@@ -27,7 +27,6 @@ app.get("/", async (req, res) => {
     res.status(500).json("Error");
   }
 });
-
 app.post("/add", async (req, res) => {
   const { name, description, interests } = req.body;
   try {
