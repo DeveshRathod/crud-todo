@@ -4,7 +4,8 @@ const app = express();
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
-require("dotenv").config();
+
+const dot = require("dotenv").config();
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log("Connected to DB");
