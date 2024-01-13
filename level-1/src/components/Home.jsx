@@ -14,17 +14,25 @@ const Home = ({ data, setData }) => {
 
   const handleSubmit = async (_id) => {
     try {
+      const requestBody = {
+        name: formData.name,
+        description: formData.description,
+      };
+
+      if (formData.interests.trim() !== "") {
+        requestBody.interests = formData.interests
+          .split(",")
+          .map((item) => item.trim());
+      }
+
       const response = await fetch(`http://localhost:3000/update/${_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          interests: formData.interests.split(",").map((item) => item.trim()),
-        }),
+        body: JSON.stringify(requestBody),
       });
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -36,23 +44,32 @@ const Home = ({ data, setData }) => {
 
   const handleAdd = async () => {
     try {
+      const requestBody = {
+        name: formData.name,
+        description: formData.description,
+      };
+
+      if (formData.interests.trim() !== "") {
+        requestBody.interests = formData.interests
+          .split(",")
+          .map((item) => item.trim());
+      }
+
       const response = await fetch("http://localhost:3000/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          interests: formData.interests.split(",").map((item) => item.trim()),
-        }),
+        body: JSON.stringify(requestBody),
       });
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
       const rowData = await response.json();
       setData(rowData.filter((item) => item._id !== _id));
-      setFormData("");
+      setFormData({ name: "", description: "", interests: "" });
     } catch (error) {
       console.error("Error adding data:", error);
       setData(data);
@@ -137,11 +154,10 @@ const Home = ({ data, setData }) => {
           </label>
           <label>
             Interest:
-            <input
+            <textarea
               name="interests"
               value={formData.interests}
               onChange={handleChange}
-              type="text"
             />
           </label>
           <button type="submit">Submit</button>

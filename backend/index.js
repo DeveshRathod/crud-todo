@@ -68,7 +68,8 @@ app.put("/update/:id", async (req, res) => {
   const { name, description, interests } = req.body;
 
   const id = req.params.id;
-
+  const user = await User.findById(id);
+  console.log(user.interests);
   try {
     const updateFields = {};
 
@@ -82,6 +83,8 @@ app.put("/update/:id", async (req, res) => {
 
     if (interests && interests.length > 0) {
       updateFields.interests = interests;
+    } else {
+      updateFields.interests = user.interests;
     }
 
     // Update the user document
