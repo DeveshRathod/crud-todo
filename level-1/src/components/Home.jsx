@@ -36,14 +36,26 @@ const Home = ({ data, setData }) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
+      // Fetch the updated data immediately after the update
+      const updatedDataResponse = await fetch("http://localhost:3000/");
+      if (!updatedDataResponse.ok) {
+        throw new Error("Network response for updated data was not ok");
+      }
+
+      const updatedData = await updatedDataResponse.json();
+      setData(updatedData);
+      setFormData({ name: "", description: "", interests: "" });
     } catch (error) {
       console.error("Error updating data:", error);
-      setData(data);
     }
   };
 
-  const handleAdd = async () => {
+  const handleAdd = async (e) => {
+    e.preventDefault();
+
     try {
+      let response;
       const requestBody = {
         name: formData.name,
         description: formData.description,
@@ -56,7 +68,7 @@ const Home = ({ data, setData }) => {
       }
 
       if (formData.name && formData.description && formData.interests) {
-        const response = await fetch("http://localhost:3000/add", {
+        response = await fetch("http://localhost:3000/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,7 +76,7 @@ const Home = ({ data, setData }) => {
           body: JSON.stringify(requestBody),
         });
       } else {
-        const response = false;
+        throw new Error("Please fill in all required fields");
       }
 
       if (!response.ok) {
@@ -72,11 +84,11 @@ const Home = ({ data, setData }) => {
       }
 
       const rowData = await response.json();
-      setData(rowData.filter((item) => item._id !== _id));
+      setData([...data, rowData]); // Update the data array
       setFormData({ name: "", description: "", interests: "" });
     } catch (error) {
       console.error("Error adding data:", error);
-      setData(data);
+      // Handle errors appropriately
     }
   };
 
@@ -90,9 +102,7 @@ const Home = ({ data, setData }) => {
         throw new Error("Network response was not ok");
       }
 
-      if (response.status === 204) {
-        setData(data.filter((item) => item._id !== _id));
-      }
+      setData(data.filter((item) => item._id !== _id));
     } catch (error) {
       console.error("Error deleting data:", error);
       setData(data);
@@ -114,7 +124,7 @@ const Home = ({ data, setData }) => {
     };
 
     fetchData();
-  }, [setData, data]);
+  }, []);
 
   return (
     <div className="main">
