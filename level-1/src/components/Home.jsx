@@ -55,13 +55,17 @@ const Home = ({ data, setData }) => {
           .map((item) => item.trim());
       }
 
-      const response = await fetch("http://localhost:3000/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+      if (formData.name && formData.description && formData.interests) {
+        const response = await fetch("http://localhost:3000/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+      } else {
+        const response = false;
+      }
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -119,6 +123,7 @@ const Home = ({ data, setData }) => {
           <div className="card" key={item._id}>
             <h2>{item.name}</h2>
             <p>{item.description}</p>
+
             <h2>Interests:</h2>
             <ul>
               {item.interests &&

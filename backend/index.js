@@ -69,7 +69,7 @@ app.put("/update/:id", async (req, res) => {
 
   const id = req.params.id;
   const user = await User.findById(id);
-  console.log(user.interests);
+
   try {
     const updateFields = {};
 
